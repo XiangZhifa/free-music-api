@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "node index"
+    "dev": "nodemon --harmony index.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

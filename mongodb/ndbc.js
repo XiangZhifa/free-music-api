@@ -7,7 +7,7 @@ client.connect().then((mongo) => {
     db = mongo.db(process.env.DB_NAME);
     console.log('Database Connect Success.');
 }).catch((error) => {
-    console.log(`Database Connect Failed : ${error}`);
+    console.error(`Database Connect Failed : ${error}`);
 });
 
 module.exports = {
