@@ -6,4 +6,7 @@ const router = express.Router();
 // 只支持form-data格式，否则会无法获取到参数
 router.post('/register', formidable(), User.register);
 
+// 只支持form-data格式，否则会无法获取到参数
+router.post('/login', formidable(), User.login);
+
 module.exports = router;
