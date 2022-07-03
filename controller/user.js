@@ -3,6 +3,7 @@ const {v4: uuidv4} = require('uuid');
 const {encrypt, decrypt} = require('../untils/crypto');
 const mongodb = require('../mongodb/ndbc.js');
 const User = require('../models/user.js');
+const cities = require('../public/json/cityCode.js');
 
 class UserController {
   constructor() {
@@ -118,11 +119,113 @@ class UserController {
         });
       });
     } catch (err) {
-      console.log('登录失败', err);
+      console.error('登录失败', err);
       res.send({
         status: 0,
         message: '系统异常，登录失败',
       })
+    }
+  }
+
+  // 用户退出
+  async logout(req, res, next) {
+    try {
+      mongodb(async (db) => {
+        const user_collection = db.collection('users');
+        await user_collection.updateOne({id: req.headers.userId}, {$set: {token: ''}});
+        res.send({
+          status: 1,
+          message: '退出登录成功',
+        });
+      })
+    } catch (error) {
+      console.error('退户登录，功能异常', error);
+      res.send({
+        status: 0,
+        message: '系统异常，退出登录失败'
+      });
+    }
+  }
+
+  // 获取用户个人信息
+  async getUserInfo(req, res, next) {
+    try {
+      const userId = req.headers.userId;
+      mongodb(async (db) => {
+        const user_collection = db.collection('users');
+        const current_user = await user_collection.findOne({id: userId});
+        delete current_user._id;
+        delete current_user.token;
+        delete current_user.password;
+        res.send({
+          status: 1,
+          data: current_user,
+        });
+      });
+    } catch (error) {
+      console.error('获取用户信息，功能异常', error);
+      res.send({
+        status: 0,
+        message: '系统异常，获取用户信息失败'
+      });
+    }
+  }
+
+  // 更新用户个人信息
+  async updateUserInfo(req, res, next) {
+    try {
+      const userParams = req.body;
+      // 参数不能为空
+      if (!userParams || JSON.stringify(userParams) === '{}') return res.send({
+        status: 0,
+        message: '参数格式错误'
+      });
+      const userId = req.headers.userId;
+      // 性别只能是 0 1 2
+      if (isNaN(userParams.gender) ||
+        Math.floor(userParams.gender) < 0 ||
+        Math.floor(userParams.gender) > 2) return res.send({
+        status: 0,
+        message: '性别参数异常，更新用户信息失败'
+      });
+      // 生日不能是当前时间之后 生日也不能是早于120年前
+      const birthTimeTemp = new Date(userParams.birthday).getTime();
+      const nowTimeTemp = new Date().getTime();
+      if (isNaN(birthTimeTemp) ||
+        nowTimeTemp - birthTimeTemp < 0 ||
+        nowTimeTemp - birthTimeTemp > 120 * 365 * 24 * 60 * 60 * 1000) {
+        return res.send({
+          status: 0,
+          message: '生日参数异常，更新用户信息失败'
+        });
+      }
+      // 城市必须是 cityCode.js 中存在的城市
+      const hasCity = cities.find((province) => province.cities[userParams.current_city] !== undefined);
+      if (!hasCity) return res.send({
+        status: 0,
+        message: '城市参数异常，更新用户信息失败'
+      });
+      mongodb(async (db) => {
+        const user_collection = db.collection('users');
+        await user_collection.updateOne({id: userId}, {
+          $set: {
+            introduction: userParams.introduction,
+            gender: Math.floor(userParams.gender),
+            birthday: new Date(userParams.birthday).getTime(),
+            current_city: userParams.current_city
+          }
+        });
+        res.send({
+          status: 1,
+          message: '更新用户信息成功'
+        });
+      })
+    } catch (error) {
+      console.error('更新用户信息，功能异常', error);
+      res.send({
+        status: 0,
+        message: '系统异常，更新用户信息失败'
+      });
     }
   }
 

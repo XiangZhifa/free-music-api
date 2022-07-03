@@ -8,6 +8,13 @@ function mongodb(operations) {
     await operations(db);
   }).catch((error) => {
     console.error(`Error : ${error}`);
+  }).finally(async () => {
+    try {
+      await client.close();
+      console.log('Database connect closed.')
+    } catch (error) {
+      console.error(`Error : ${error}`);
+    }
   })
 }
 
