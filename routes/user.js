@@ -16,4 +16,6 @@ router.get('/getUserInfo', checkAuth.checkToken, User.getUserInfo);
 
 router.post('/updateUserInfo', checkAuth.checkToken, User.updateUserInfo);
 
+router.post('/uploadAvatar', checkAuth.checkToken, formidable(), User.uploadAvatar);
+
 module.exports = router;
