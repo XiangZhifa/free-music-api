@@ -1,3 +1,16 @@
+const mongodb = require('../mongodb/ndbc.js');
+
+// 为users表创建索引
+mongodb(async (db) => {
+  try {
+    const user_collection = db.collection('users');
+    await user_collection.createIndex({_id: 1, id: 1, user_name: 1, token: 1});
+    console.log('user_collection indexed success')
+  } catch (error) {
+    throw error;
+  }
+});
+
 module.exports = class User {
   /**uuid @type string**/
   id = '';
@@ -7,6 +20,8 @@ module.exports = class User {
   password = '';
   /**注册日期时间戳 @type number**/
   create_time = -1;
+  /**用户登录token @type string**/
+  token = '';
   /**头像 @type string 头像id**/
   avatar = '';
   /**简介/签名 @type string**/

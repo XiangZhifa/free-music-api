@@ -3,11 +3,18 @@ const {MongoClient} = require('mongodb');
 const client = new MongoClient(process.env.MONGO_URL);
 
 function mongodb(operations) {
-  client.connect().then((mongo) => {
+  client.connect().then(async (mongo) => {
     const db = mongo.db(process.env.DB_NAME);
-    operations(db);
+    await operations(db);
   }).catch((error) => {
-    console.error(`Database Connect Failed : ${error}`);
+    console.error(`Error : ${error}`);
+  }).finally(async () => {
+    try {
+      await client.close();
+      console.log('Database connect closed.')
+    } catch (error) {
+      console.error(`Error : ${error}`);
+    }
   })
 }
 
