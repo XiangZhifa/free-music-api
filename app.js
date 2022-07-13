@@ -17,6 +17,7 @@ dotenv.config({path: `${pathsDotenv}`}); // 加载.env
 
 const usersRouter = require('./routes/user');
 const songRouter = require('./routes/song');
+const collectionRouter = require('./routes/collection');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', usersRouter);
 app.use('/song', songRouter);
+app.use('/collection', collectionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
