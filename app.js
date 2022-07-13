@@ -16,6 +16,7 @@ dotenv.config({path: `${pathsDotenv}.development`});  // 加载.env.development
 dotenv.config({path: `${pathsDotenv}`}); // 加载.env
 
 const usersRouter = require('./routes/user');
+const songRouter = require('./routes/song');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', usersRouter);
+app.use('/song', songRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
