@@ -3,11 +3,11 @@ const {v4: uuidv4} = require('uuid');
 const fs = require('fs');
 // 以下三个图片压缩插件，请按固定版本号安装，否则会有兼容性问题
 // "imagemin": "7.0.1",
-const imagemin = require('imagemin');
+// const imagemin = require('imagemin');
 // "imagemin-jpegtran": "7.0.0",
-const imageminJpegtran = require('imagemin-jpegtran');
+// const imageminJpegtran = require('imagemin-jpegtran');
 // "imagemin-pngquant": "7.0.0",
-const imageminPngquant = require('imagemin-pngquant');
+// const imageminPngquant = require('imagemin-pngquant');
 const {encrypt, decrypt} = require('../untils/crypto');
 const mongodb = require('../mongodb/ndbc.js');
 const User = require('../models/user.js');
@@ -280,21 +280,21 @@ class UserController {
       });
     });
     // 对50kb以上图片进行压缩(因插件问题，暂时无法压缩)
-    if (avatar_file.size > 50 * 1024) {
-      try {
-        await imagemin([`web/public/img/avatars/${user_id}_avatar.png`], {
-          destination: 'web/public/img/avatars',
-          plugins: [
-            imageminJpegtran(),
-            imageminPngquant({
-              quality: [0.01, 0.02]
-            })
-          ]
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    }
+    // if (avatar_file.size > 50 * 1024) {
+    //   try {
+    //     await imagemin([`web/public/img/avatars/${user_id}_avatar.png`], {
+    //       destination: 'web/public/img/avatars',
+    //       plugins: [
+    //         imageminJpegtran(),
+    //         imageminPngquant({
+    //           quality: [0.01, 0.02]
+    //         })
+    //       ]
+    //     });
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // }
   }
 
   // 生成新token
